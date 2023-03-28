@@ -1,0 +1,5 @@
+In this project, I used Python to explore data related to bike share systems in Chicago, New York City, and Washington. 
+My goal was to import the data and answer interesting questions about it by computing descriptive statistics. 
+Additionally, I wrote a script that took in raw input to create an interactive experience in the terminal to present these statistics.
+I was excited to dive into this project and see what insights I could uncover about these three major cities and their bike share systems!
+
