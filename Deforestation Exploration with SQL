@@ -274,7 +274,7 @@ ORDER BY region;
 -- Comparing the percentage of forest area in 1990 and in 2016 by region
 
 
-/* Queries to explore the country-level details
+/* 3. Queries to explore the country-level details
 
 WITH forest_area_1990 AS 
 	(SELECT f_countryname, forest_area_sqkm, region, f_year
@@ -326,3 +326,83 @@ ORDER BY 2 DESC;
 -- The largest percent increase of forest areas goes to Iceland with 212.50%
 -- The land mass of China and the US are large compared to Iceland, which result in the smaller country to have a higher percentage of increase
 
+
+WITH forest_area_1990 AS (
+  SELECT f_countryname,  forest_area_sqkm, region, f_year
+ FROM forestation 
+ WHERE f_year = 1990), 
+forest_area_2016 AS ( 
+  SELECT f_countryname, forest_area_sqkm, f_year
+  FROM forestation 
+  WHERE f_year = 2016),
+joined_1990_2016 AS (
+  SELECT fa90.f_countryname, fa90.region, fa90.forest_area_sqkm AS forest_area_sqkm_90, fa90.f_year AS year_90, fa16.forest_area_sqkm AS forest_area_sqkm_16, fa16.f_year AS year_16
+  FROM forest_area_1990 AS fa90
+  JOIN forest_area_2016 AS fa16
+  ON fa90.f_countryname = fa16.f_countryname) 
+SELECT f_countryname AS country, region, ABS((forest_area_sqkm_90 - forest_area_sqkm_16)) AS
+    abs_forest_area_change, forest_area_sqkm_90, forest_area_sqkm_16
+FROM joined_1990_2016
+WHERE forest_area_sqkm_16 < 
+      forest_area_sqkm_90 AND f_countryname != 'World'
+ORDER BY 3 DESC
+LIMIT 5;
+
+-- Checking for the top 5 countries with the largest forest area decrease from 1990 to 2016
+
+
+WITH forest_area_percent_1990 AS
+	(SELECT f_countryname, f.forest_percentage AS forest_percent_1990, region
+     	FROM forestation AS f
+     	WHERE f_year = '1990'),
+forest_percentage_2016 AS
+	(SELECT f_countryname, f.forest_percentage AS forest_percent_2016
+   	 FROM forestation AS f
+    	WHERE f_year ='2016'),
+joined_1990_2016 AS
+	(SELECT fp90.f_countryname AS country_name, fp90.forest_percent_1990 AS forest_percent_1990, fp16.forest_percent_2016 AS forest_percent_2016, fp90.region AS region
+     	FROM forest_area_percent_1990 AS fp90
+     	JOIN forest_percentage_2016 AS fp16
+    	 ON fp90.f_countryname = fp16.f_countryname)
+SELECT country_name, 
+	ROUND(((forest_percent_1990 - forest_percent_2016)/forest_percent_1990) *100::numeric,2) AS percent_change, region, forest_percent_1990, forest_percent_2016
+FROM joined_1990_2016
+WHERE forest_percent_1990 > forest_percent_2016
+ORDER BY 2 DESC
+LIMIT 5;
+
+-- Checking for the top 5 countries with the largest percentage of forest area decrease from 1990 to 2016
+
+
+SELECT  
+	CASE
+	WHEN forest_percentage <= 25 THEN '0-25' 
+   	WHEN forest_percentage > 25 AND forest_percentage <=50 THEN '25-50' 
+	WHEN forest_percentage > 50 AND forest_percentage <=75 THEN '50-75'
+   	WHEN forest_percentage > 75 AND forest_percentage <=100 THEN'75-100'
+    	ELSE 'NULL'
+	END AS quartiles,
+    	COUNT(f_countryname) AS num_of_countries
+FROM forestation
+WHERE f_year = 2016 AND f_countryname != 'World'
+GROUP BY quartiles
+ORDER BY quartiles;
+
+-- Created a table with quartiles to check for the number of countries within each quartiles
+
+
+SELECT  
+	CASE
+	WHEN forest_percentage <= 25 THEN '0-25' 
+    	WHEN forest_percentage > 25 AND forest_percentage <=50 THEN '25-50' 
+	WHEN forest_percentage > 50 AND forest_percentage <=75 THEN '50-75'
+   	WHEN forest_percentage > 75 AND forest_percentage <=100 THEN'75-100'
+   	ELSE 'NULL'
+	END AS quartiles,
+    	f_countryname,
+   	forest_percentage,
+    	region
+FROM forestation
+WHERE f_year = 2016 AND forest_percentage > 75 AND forest_percentage <=100
+GROUP BY quartiles, f_countryname, forest_percentage, region
+ORDER BY forest_percentage DESC;
