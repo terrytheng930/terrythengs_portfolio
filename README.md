@@ -19,3 +19,13 @@ In this project, I used Python to explore data related to bike share systems in 
 * counts of each user type
 * counts of each gender (only available for NYC & Chicago)
 * earliest, most recent, most common year of birth (only available for NYC & Chicago)
+
+
+### [Global Deforestation Exploration Queries](https://github.com/terrytheng930/terrythengs_portfolio/blob/main/Global_Deforestation_Project.sql)
+##### [Global Deforestation Exploration Report](https://docs.google.com/document/d/10tXiYncpZGHvhvRA3TbCiiBkiqZQvKXhJC2eEgx6fco/edit#)
+ForestQuery is a data analysis project that aims to combat deforestation and raise awareness about its impact on the environment. The team uses SQL to analyze the data and identify trends and patterns, such as countries with significant deforestation over time and countries that have successfully increased their forest area. The insights gained from the analysis can be used by policymakers, conservationists, and anyone interested in protecting the environment.
+
+#### Areas of Exploration
+##### 1. Global Situation
+##### 2. Regional Outlook
+##### 3. Country-Level Details
