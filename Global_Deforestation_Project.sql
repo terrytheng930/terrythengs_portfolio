@@ -406,3 +406,5 @@ FROM forestation
 WHERE f_year = 2016 AND forest_percentage > 75 AND forest_percentage <=100
 GROUP BY quartiles, f_countryname, forest_percentage, region
 ORDER BY forest_percentage DESC;
+
+-- Checking for the top quartile countries in 2016
